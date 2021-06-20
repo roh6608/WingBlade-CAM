@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+// probably best to move my functions into header files etc for a cleaner build.
 typedef struct coord
 {
     double **x;
@@ -15,7 +16,7 @@ double** alphaTransform(double **x, double alpha, int len);
 
 double** chordTransform(double **x, double chord, int len);
 
-coord dihedralTransform(coord foam, double dihedral);
+coord dihedralTransform(coord foam, double dihedral, int len);
 
 coord sweepTransform(coord foam, double sweep);
 
@@ -27,6 +28,7 @@ int main(){
     return 0;
 }
 
+// A function to transform the coordinates on the foam block to the coordinates the towers have to follow
 coord block2tower(coord foam, double towerDist, int len){
     // defining variables
     int i;
@@ -70,6 +72,7 @@ coord block2tower(coord foam, double towerDist, int len){
 
 }
 
+// A function to change the angle of attack of the aerofoil by the value passed to it
 double** alphaTransform(double **x, double alpha, int len){
     // defining variables
     int i;
@@ -91,6 +94,7 @@ double** alphaTransform(double **x, double alpha, int len){
     return transform;
 }
 
+// A function to scale an aerofoil to the chord passed to it
 double** chordTransform(double **x, double chord, int len){
     // defining variables
     int i;
@@ -108,6 +112,29 @@ double** chordTransform(double **x, double chord, int len){
 
     // freeing memory
     free(x);
+
+    return transform;
+}
+
+coord dihedralTransform(coord foam, double dihedral, int len){
+    // defining variables
+    int i;
+    coord transform;
+
+    // allocating memory
+    transform.u = malloc(sizeof(transform.u)*len);
+    transform.x = malloc(sizeof(transform.x)*len);
+
+    // calculating values
+    for(i=0;i<len;i++){
+        transform.u[i][0] = foam.u[i][0];
+        transform.u[i][1] = foam.u[i][1]-foam.u[i][0]*tan(dihedral);
+        transform.u[i][2] = foam.u[i][2];
+    }
+
+    // freeing memory
+    free(foam.u);
+    free(foam.x);
 
     return transform;
 }
