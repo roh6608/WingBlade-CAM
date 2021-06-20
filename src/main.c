@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 typedef struct coord
 {
@@ -10,13 +11,15 @@ typedef struct coord
 
 coord block2tower(coord foam, double towerDist, int len);
 
-double** alphaTransform(coord foam, double alpha);
+double** alphaTransform(double **x, double alpha, int len);
 
 double** chordTransform(coord foam, double chord);
 
 coord dihedralTransform(coord foam, double dihedral);
 
 coord sweepTransform(coord foam, double sweep);
+
+void coord2gcode(coord tower, char **options);
 
 int main(){
     // write a test.c and automate the testing with make
@@ -56,7 +59,36 @@ coord block2tower(coord foam, double towerDist, int len){
         towerCoords.x[i][1] = foam.x[i][0] + tx[i]*(foam.u[i][1]-foam.x[i][1]);
         towerCoords.x[i][2] = foam.x[i][2] + tx[i]*(foam.u[i][2]-foam.x[i][2]);
     }
+
+    // freeing memory
+    free(foam.x);
+    free(foam.u);
+    free(tx);
+    free(tu);
     
     return towerCoords;
+
+}
+
+double** alphaTransform(double **x, double alpha, int len){
+    // defining variables
+    int i;
+    double **transform;
+
+    // allocating memory
+    transform = malloc(sizeof(transform)*len);
+
+    // calculating values
+    for(i=0;i<len;i++){
+        transform[i][0] = x[i][0];
+        transform[i][1] = x[i][1]*cos(-alpha)+x[i][2]*sin(-alpha);
+        transform[i][2] = -x[i][1]*sin(-alpha)+x[i][2]*cos(-alpha);
+    }
+
+    // freeing memory
+    free(x);
+
+    return transform;
+
 
 }
