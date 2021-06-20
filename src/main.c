@@ -13,7 +13,7 @@ coord block2tower(coord foam, double towerDist, int len);
 
 double** alphaTransform(double **x, double alpha, int len);
 
-double** chordTransform(coord foam, double chord);
+double** chordTransform(double **x, double chord, int len);
 
 coord dihedralTransform(coord foam, double dihedral);
 
@@ -89,6 +89,25 @@ double** alphaTransform(double **x, double alpha, int len){
     free(x);
 
     return transform;
+}
 
+double** chordTransform(double **x, double chord, int len){
+    // defining variables
+    int i;
+    double **transform;
 
+    // allocating memory
+    transform = malloc(sizeof(transform)*len);
+
+    // calculating values
+    for(i=0;i<len;i++){
+        transform[i][0] = x[i][0];
+        transform[i][1] = x[i][1]*chord;
+        transform[i][2] = x[i][2]*chord;
+    }
+
+    // freeing memory
+    free(x);
+
+    return transform;
 }
