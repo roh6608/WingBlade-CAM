@@ -20,9 +20,11 @@ coord dihedralTransform(coord foam, double dihedral, int len);
 
 coord sweepTransform(coord foam, double sweep, int len);
 
+// this is the function that will write the file. Options can read from a supplied file and then just add it
+// into the head of the gcode program
 void coord2gcode(coord tower, char **options);
 
-int main(){
+int main(int argc, char *argv[]){
     // write a test.c and automate the testing with make
 
     return 0;
