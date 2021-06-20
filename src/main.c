@@ -18,7 +18,7 @@ double** chordTransform(double **x, double chord, int len);
 
 coord dihedralTransform(coord foam, double dihedral, int len);
 
-coord sweepTransform(coord foam, double sweep);
+coord sweepTransform(coord foam, double sweep, int len);
 
 void coord2gcode(coord tower, char **options);
 
@@ -137,4 +137,28 @@ coord dihedralTransform(coord foam, double dihedral, int len){
     free(foam.x);
 
     return transform;
+}
+
+coord sweepTransform(coord foam, double sweep, int len){
+    // defining variables
+    int i;
+    coord transform;
+
+    // allocating memory
+    transform.u = malloc(sizeof(transform.u)*len);
+    transform.x = malloc(sizeof(transform.x)*len);
+
+    // calculating values
+    for(i=0;i<len;i++){
+        transform.u[i][0] = foam.u[i][0];
+        transform.u[i][1] = foam.u[i][1]+foam.u[i][0]*tan(sweep);
+        transform.u[i][2] = foam.u[i][2];
+    }
+
+    // freeing memory
+    free(foam.u);
+    free(foam.x);
+
+    return transform;
+
 }
