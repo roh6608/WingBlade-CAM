@@ -163,7 +163,12 @@ coord sweepTransform(coord foam, double sweep, int len){
 void coord2gcode(coord tower, int len, char **options){
     // defining variables
 
-    // opening file (the head of the gcode program)
+    // translate coordinates to be 0,0 at the front of foam cutter so will probably have to have some sort of
+    // config file and parser.
+    // also need the lead in path.
+
+    // opening file (the head of the gcode program) this will get joined to the top of the written file
+    // probably best to write standalone function for this.
 
     // writing file
 
