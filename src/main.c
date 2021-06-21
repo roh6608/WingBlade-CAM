@@ -279,3 +279,16 @@ void coord2gcode(coord tower, int len){
     free(tower.u);
     free(tower.x);
 }
+
+coord readFile(char *filename){
+    // defining variables
+    int i;
+    coord aerofoil;
+    FILE *in = fopen(filename, "r");
+
+    // allocating memory
+
+    // reading file and assigning values
+
+    // freeing memory
+}
