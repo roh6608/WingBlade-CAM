@@ -24,34 +24,37 @@ coord sweepTransform(coord foam, double sweep, int len);
 
 // this is the function that will write the file. Options can read from a supplied file and then just add it
 // into the head of the gcode program
-void coord2gcode(double **x, double **u, int len);
+void coord2gcode(coord tower, int len);
 
 int main(){
     // write a test.c and automate the testing with make
+    
+    // TODO:
+    // fix functions so they allocate memory properly
     int n = 4, i;
-    double **u, **x;
+    coord foam;
     double arrx[4][3] = {{1,0,0},{1,1,0},{1,1,1},{1,0,1}}, arru[4][3] = {{-1,0,0},{-1,1,0},{-1,1,1},{-1,0,1}};
 
-    u = malloc(sizeof(u)*n);
-    x = malloc(sizeof(x)*n);
+    foam.u = malloc(sizeof(foam.u)*n);
+    foam.x = malloc(sizeof(foam.x)*n);
 
     for(i=0;i<n;i++){
-        u[i] = malloc(sizeof(u)*3);
-        x[i] = malloc(sizeof(x)*3);
+        foam.u[i] = malloc(sizeof(foam.u)*3);
+        foam.x[i] = malloc(sizeof(foam.x)*3);
     }
 
     for(i=0;i<3;i++){
-        u[i][0] = arru[i][0];
-        u[i][1] = arru[i][1];
-        u[i][2] = arru[i][2];
+        foam.u[i][0] = arru[i][0];
+        foam.u[i][1] = arru[i][1];
+        foam.u[i][2] = arru[i][2];
 
-        x[i][0] = arrx[i][0];
-        x[i][1] = arrx[i][1];
-        x[i][2] = arrx[i][2];
+        foam.x[i][0] = arrx[i][0];
+        foam.x[i][1] = arrx[i][1];
+        foam.x[i][2] = arrx[i][2];
     }
 
 
-    coord2gcode(x,u,n);
+    coord2gcode(foam,n);
 
     
 
@@ -72,6 +75,11 @@ coord block2tower(coord foam, double towerDist, int len){
     towerCoords.u = malloc(sizeof(towerCoords.u)*len);
     towerCoords.x = malloc(sizeof(towerCoords.x)*len);
 
+    for(i=0;i<len;i++){
+        towerCoords.u[i] = malloc(sizeof(towerCoords.u)*3);
+        towerCoords.x[i] = malloc(sizeof(towerCoords.x)*3);
+    }
+
 
     // calculating values
     for(i=0;i<len;i++){
@@ -89,6 +97,11 @@ coord block2tower(coord foam, double towerDist, int len){
     }
 
     // freeing memory
+    for(i=0;i<len;i++){
+        free(foam.u[i]);
+        free(foam.x[i]);
+    }
+
     free(foam.x);
     free(foam.u);
     
@@ -105,6 +118,10 @@ double** alphaTransform(double **x, double alpha, int len){
     // allocating memory
     transform = malloc(sizeof(transform)*len);
 
+    for(i=0;i<len;i++){
+        transform[i] = malloc(sizeof(transform)*3);
+    }
+
     // calculating values
     for(i=0;i<len;i++){
         transform[i][0] = x[i][0];
@@ -113,6 +130,10 @@ double** alphaTransform(double **x, double alpha, int len){
     }
 
     // freeing memory
+    for(i=0;i<len;i++){
+        free(transform[i]);
+    }
+
     free(x);
 
     return transform;
@@ -127,6 +148,10 @@ double** chordTransform(double **x, double chord, int len){
     // allocating memory
     transform = malloc(sizeof(transform)*len);
 
+    for(i=0;i<len;i++){
+        transform[i] = malloc(sizeof(transform)*3);
+    }
+
     // calculating values
     for(i=0;i<len;i++){
         transform[i][0] = x[i][0];
@@ -135,6 +160,10 @@ double** chordTransform(double **x, double chord, int len){
     }
 
     // freeing memory
+    for(i=0;i<len;i++){
+        free(transform[i]);
+    }
+
     free(x);
 
     return transform;
@@ -149,6 +178,11 @@ coord dihedralTransform(coord foam, double dihedral, int len){
     transform.u = malloc(sizeof(transform.u)*len);
     transform.x = malloc(sizeof(transform.x)*len);
 
+    for(i=0;i<len;i++){
+        transform.u[i] = malloc(sizeof(transform.u)*3);
+        transform.x[i] = malloc(sizeof(transform.u)*3);
+    }
+
     // calculating values
     for(i=0;i<len;i++){
         transform.u[i][0] = foam.u[i][0];
@@ -157,6 +191,11 @@ coord dihedralTransform(coord foam, double dihedral, int len){
     }
 
     // freeing memory
+    for(i=0;i<len;i++){
+        free(transform.u[i]);
+        free(transform.x[i]);
+    }
+
     free(foam.u);
     free(foam.x);
 
@@ -172,6 +211,11 @@ coord sweepTransform(coord foam, double sweep, int len){
     transform.u = malloc(sizeof(transform.u)*len);
     transform.x = malloc(sizeof(transform.x)*len);
 
+    for(i=0;i<len;i++){
+        transform.u[i] = malloc(sizeof(transform.u)*3);
+        transform.x[i] = malloc(sizeof(transform.u)*3);
+    }
+
     // calculating values
     for(i=0;i<len;i++){
         transform.u[i][0] = foam.u[i][0];
@@ -180,6 +224,11 @@ coord sweepTransform(coord foam, double sweep, int len){
     }
 
     // freeing memory
+    for(i=0;i<len;i++){
+        free(transform.u[i]);
+        free(transform.x[i]);
+    }
+
     free(foam.u);
     free(foam.x);
 
@@ -187,7 +236,8 @@ coord sweepTransform(coord foam, double sweep, int len){
 
 }
 
-void coord2gcode(double **x, double **u, int len){
+// Function to create the gcode .ngc file from the tower coordinates
+void coord2gcode(coord tower, int len){
     // defining variables
     int i;
     char *feedRate = "F100"; //this argument will have to be input somewhere
@@ -196,9 +246,6 @@ void coord2gcode(double **x, double **u, int len){
     FILE *out = fopen("file.ngc", "w"); // filename given from command line
 
     char *head[8] = {"G17","G21","G90","G40","G49","G64","G94",feedRate};
-
-    // printing current time at the head of the file
-    //fprintf(out,"( Created on; %s )\n",ctime(&time));
 
     // printing the necessary g-codes at the head of the file
     for(i=0;i<8;i++){
@@ -209,12 +256,17 @@ void coord2gcode(double **x, double **u, int len){
 
     // printing the coordinates for the towers to follow
     for(i=0;i<len;i++){
-        fprintf(out,"G01 X%4.2f Y%4.2f U%4.2f Z%4.2f\n",x[i][1], x[i][2], u[i][1], u[i][2]);
+        fprintf(out,"G01 X%4.2f Y%4.2f U%4.2f Z%4.2f\n",tower.x[i][1], tower.x[i][2], tower.u[i][1], tower.u[i][2]);
     }
 
     fclose(out);
 
     // freeing memory
-    free(u);
-    free(x);
+    for(i=0;i<len;i++){
+        free(tower.u[i]);
+        free(tower.x[i]);
+    }
+
+    free(tower.u);
+    free(tower.x);
 }
