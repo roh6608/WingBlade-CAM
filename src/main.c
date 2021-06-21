@@ -10,8 +10,6 @@ typedef struct coord
     double **u;
 } coord;
 
-// consier writing a function that can allocate and free the memory for my struct
-
 coord block2tower(coord foam, double towerDist, int len);
 
 double** alphaTransform(double **x, double alpha, int len);
@@ -22,12 +20,13 @@ coord dihedralTransform(coord foam, double dihedral, int len);
 
 coord sweepTransform(coord foam, double sweep, int len);
 
-// this is the function that will write the file. Options can read from a supplied file and then just add it
-// into the head of the gcode program
 void coord2gcode(coord tower, int len);
 
 int main(){
-    // write a test.c and automate the testing with make
+    //TODO:
+    // - write a test.c and automate the testing with make
+    // - write and test interface for creating g-code files
+    // - finish coord2gcode function, add comments for header g-codes and add the translations and path etc.
 
     int n = 4, i;
     coord foam;
