@@ -28,9 +28,7 @@ void coord2gcode(coord tower, int len);
 
 int main(){
     // write a test.c and automate the testing with make
-    
-    // TODO:
-    // fix functions so they allocate memory properly
+
     int n = 4, i;
     coord foam;
     double arrx[4][3] = {{1,0,0},{1,1,0},{1,1,1},{1,0,1}}, arru[4][3] = {{-1,0,0},{-1,1,0},{-1,1,1},{-1,0,1}};
