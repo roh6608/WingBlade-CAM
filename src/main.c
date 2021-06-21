@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 // probably best to move my functions into header files etc for a cleaner build.
 typedef struct coord
@@ -163,27 +164,34 @@ coord sweepTransform(coord foam, double sweep, int len){
 void coord2gcode(coord tower, int len, char **options){
     // defining variables
     int i;
-    char *feedRate;
-    //translate coordinates to work with the 'lead in' path and also add the lead in path.
-
-    // write my own gcode head to the file
-
+    char *feedRate = "F100"; //this argument will have to be input somewhere
+    time_t t;
+    
     // writing file
     FILE *out = fopen("file.ngc", "w"); // filename given from command line
 
     char *head[8] = {"G17","G21","G90","G40","G49","G64","G94",feedRate};
 
+    time(&t);
+
+    // printing current time at the head of the file
+    fprintf("( Created on; %s )\n",ctime(&time));
+
+    // printing the necessary g-codes at the head of the file
     for(i=0;i<8;i++){
         fprintf("%s\n\n",head[i]);
     }
 
+    //translate coordinates to work with the 'lead in' path and also add the lead in path.
+
+    // printing the coordinates for the towers to follow
     for(i=0;i<len;i++){
         fprintf("G01 X%4.2f Y%4.2f U%4.2f Z%4.2f\n",&tower.x[i][1], &tower.x[i][2], &tower.u[i][1], &tower.u[i][2]);
     }
 
     fclose(out);
 
-    // saving file
-
     // freeing memory
+    free(tower.u);
+    free(tower.x);
 }
