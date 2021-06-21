@@ -162,7 +162,7 @@ coord sweepTransform(coord foam, double sweep, int len){
 
 void coord2gcode(coord tower, int len, char **options){
     // defining variables
-
+    int i;
     // translate coordinates to be 0,0 at the front of foam cutter so will probably have to have some sort of
     // config file and parser.
     // also need the lead in path.
@@ -171,6 +171,11 @@ void coord2gcode(coord tower, int len, char **options){
     // probably best to write standalone function for this.
 
     // writing file
+    FILE *out = fopen("file.ngc", "w");
+
+    for(i=0;i<len;i++){
+        fprintf("G01 X%4.2f Y%4.2f U%4.2f Z%4.2f\n",&tower.x[i][1], &tower.x[i][2], &tower.u[i][1], &tower.u[i][2]);
+    }
 
     // saving file
 }
