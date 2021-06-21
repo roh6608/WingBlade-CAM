@@ -24,10 +24,36 @@ coord sweepTransform(coord foam, double sweep, int len);
 
 // this is the function that will write the file. Options can read from a supplied file and then just add it
 // into the head of the gcode program
-void coord2gcode(coord tower, int len, char **options);
+void coord2gcode(double **x, double **u, int len);
 
-int main(int argc, char *argv[]){
+int main(){
     // write a test.c and automate the testing with make
+    int n = 4, i;
+    double **u, **x;
+    double arrx[4][3] = {{1,0,0},{1,1,0},{1,1,1},{1,0,1}}, arru[4][3] = {{-1,0,0},{-1,1,0},{-1,1,1},{-1,0,1}};
+
+    u = malloc(sizeof(u)*n);
+    x = malloc(sizeof(x)*n);
+
+    for(i=0;i<n;i++){
+        u[i] = malloc(sizeof(u)*3);
+        x[i] = malloc(sizeof(x)*3);
+    }
+
+    for(i=0;i<3;i++){
+        u[i][0] = arru[i][0];
+        u[i][1] = arru[i][1];
+        u[i][2] = arru[i][2];
+
+        x[i][0] = arrx[i][0];
+        x[i][1] = arrx[i][1];
+        x[i][2] = arrx[i][2];
+    }
+
+
+    coord2gcode(x,u,n);
+
+    
 
     return 0;
 }
@@ -161,37 +187,34 @@ coord sweepTransform(coord foam, double sweep, int len){
 
 }
 
-void coord2gcode(coord tower, int len, char **options){
+void coord2gcode(double **x, double **u, int len){
     // defining variables
     int i;
     char *feedRate = "F100"; //this argument will have to be input somewhere
-    time_t t;
     
     // writing file
     FILE *out = fopen("file.ngc", "w"); // filename given from command line
 
     char *head[8] = {"G17","G21","G90","G40","G49","G64","G94",feedRate};
 
-    time(&t);
-
     // printing current time at the head of the file
-    fprintf("( Created on; %s )\n",ctime(&time));
+    //fprintf(out,"( Created on; %s )\n",ctime(&time));
 
     // printing the necessary g-codes at the head of the file
     for(i=0;i<8;i++){
-        fprintf("%s\n\n",head[i]);
+        fprintf(out,"%s\n\n",head[i]);
     }
 
     //translate coordinates to work with the 'lead in' path and also add the lead in path.
 
     // printing the coordinates for the towers to follow
     for(i=0;i<len;i++){
-        fprintf("G01 X%4.2f Y%4.2f U%4.2f Z%4.2f\n",&tower.x[i][1], &tower.x[i][2], &tower.u[i][1], &tower.u[i][2]);
+        fprintf(out,"G01 X%4.2f Y%4.2f U%4.2f Z%4.2f\n",x[i][1], x[i][2], u[i][1], u[i][2]);
     }
 
     fclose(out);
 
     // freeing memory
-    free(tower.u);
-    free(tower.x);
+    free(u);
+    free(x);
 }
