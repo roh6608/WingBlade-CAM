@@ -22,15 +22,18 @@ coord sweepTransform(coord foam, double sweep, int len);
 
 void coord2gcode(coord tower, int len);
 
+coord readFile(char *filename);
+
 int main(){
     //TODO:
     // - write a test.c and automate the testing with make
     // - write and test interface for creating g-code files
     // - finish coord2gcode function, add comments for header g-codes and add the translations and path etc.
+    // - use libcurl to download aerofoils from the UIUC database, then can delete them after the data has been read in
 
     int n = 4, i;
-    coord foam;
-    double arrx[4][3] = {{1,0,0},{1,1,0},{1,1,1},{1,0,1}}, arru[4][3] = {{-1,0,0},{-1,1,0},{-1,1,1},{-1,0,1}};
+    coord foam, tower;
+    double arrx[4][3] = {{1,0,0},{1,1,0},{1,1,1},{1,0,1}}, arru[4][3] = {{-1,0,0},{-1,2,0},{-1,2,2},{-1,0,2}};
 
     foam.u = malloc(sizeof(foam.u)*n);
     foam.x = malloc(sizeof(foam.x)*n);
@@ -38,6 +41,14 @@ int main(){
     for(i=0;i<n;i++){
         foam.u[i] = malloc(sizeof(foam.u)*3);
         foam.x[i] = malloc(sizeof(foam.x)*3);
+    }
+
+    tower.u = malloc(sizeof(tower.u)*n);
+    tower.x = malloc(sizeof(tower.x)*n);
+
+    for(i=0;i<n;i++){
+        tower.u[i] = malloc(sizeof(tower.u)*3);
+        tower.x[i] = malloc(sizeof(tower.x)*3);
     }
 
     for(i=0;i<3;i++){
@@ -50,8 +61,9 @@ int main(){
         foam.x[i][2] = arrx[i][2];
     }
 
+    tower = block2tower(foam,100,4);
 
-    coord2gcode(foam,n);
+    coord2gcode(tower,n);
 
     
 
