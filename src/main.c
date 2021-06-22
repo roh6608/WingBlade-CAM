@@ -298,3 +298,14 @@ coord readFile(char *filename){
 
     // freeing memory
 }
+
+double interpSingle(double x1, double y1, double x2, double y2, double xVal){
+    // defining variables
+    double frac, yval;
+
+    // calculting variables
+    frac = (xVal - x1)/(x2-x1);
+    yval = y1+frac*(y2-y1);
+
+    return yval;
+}
