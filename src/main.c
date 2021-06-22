@@ -14,6 +14,7 @@ typedef struct aerofoil
 {
     double *x;
     double *y;
+    long int len;
 } aerofoil;
 
 coord block2tower(coord foam, double towerDist, int len);
@@ -34,7 +35,9 @@ double interpSingle(double x1, double y1, double x2, double y2, double xVal);
 
 double* interp(double *x, double *y, double *xInterp, int len);
 
-int main(){
+aerofoil resample(aerofoil foil, int resample, int len);
+
+int main(int argc, char *argv[]){
     //TODO:
     // - write a test.c and automate the testing with make
     // - write and test interface for creating g-code files
@@ -42,6 +45,14 @@ int main(){
     // - add multi-cut functionality so every section can be cut in one gcode file
     // - once first version is done have main and development branches.
     // - use libcurl to download aerofoils from the UIUC database, then can delete them after the data has been read in
+    // - write a function that can split the aerofoil, resample it with the interp function and then return the resampled
+    //   aerofoil.
+    // - Add a todo/under development in the github readme.
+    // - For user interface have the command line options, where they can pass the aerofoils they want to use,
+    //   can then either open them in the directory or try the UIUC database and download from there (libcurl),
+    //   they can pass command line flags for the options they would like to change and then, when it is run it
+    //   will ask for the input of the values. Won't worry about more than 2 aerofoils or multi cuts yet.
+    // - selig to lednicer format converter?
 
     int n = 4, i;
     coord foam, tower;
@@ -76,8 +87,6 @@ int main(){
     tower = block2tower(foam,100,4);
 
     coord2gcode(tower,n);
-
-    
 
     return 0;
 }
@@ -295,18 +304,7 @@ void coord2gcode(coord tower, int len){
 }
 
 // A function to read aerofoil .dat files and return them in the aerofoil struct
-aerofoil readFile(char *filename){
-    // defining variables
-    int i;
-    coord aerofoil;
-    FILE *in = fopen(filename, "r");
 
-    // allocating memory
-
-    // reading file and assigning values
-
-    // freeing memory
-}
 
 // A function to interpolate between two points
 double interpSingle(double x1, double y1, double x2, double y2, double xVal){
