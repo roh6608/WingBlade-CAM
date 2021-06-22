@@ -24,11 +24,17 @@ void coord2gcode(coord tower, int len);
 
 coord readFile(char *filename);
 
+double interpSingle(double x1, double y1, double x2, double y2, double xVal);
+
+double* interp(double *x, double *y, double *xInterp, int len);
+
 int main(){
     //TODO:
     // - write a test.c and automate the testing with make
     // - write and test interface for creating g-code files
     // - finish coord2gcode function, add comments for header g-codes and add the translations and path etc.
+    // - add multi-cut functionality so every section can be cut in one gcode file
+    // - once first version is done have main and development branches.
     // - use libcurl to download aerofoils from the UIUC database, then can delete them after the data has been read in
 
     int n = 4, i;
