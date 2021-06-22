@@ -10,6 +10,12 @@ typedef struct coord
     double **u;
 } coord;
 
+typedef struct aerofoil
+{
+    double *x;
+    double *y;
+} aerofoil;
+
 coord block2tower(coord foam, double towerDist, int len);
 
 double** alphaTransform(double **x, double alpha, int len);
@@ -22,7 +28,7 @@ coord sweepTransform(coord foam, double sweep, int len);
 
 void coord2gcode(coord tower, int len);
 
-coord readFile(char *filename);
+aerofoil readFile(char *filename);
 
 double interpSingle(double x1, double y1, double x2, double y2, double xVal);
 
@@ -286,7 +292,7 @@ void coord2gcode(coord tower, int len){
     free(tower.x);
 }
 
-coord readFile(char *filename){
+aerofoil readFile(char *filename){
     // defining variables
     int i;
     coord aerofoil;
@@ -303,9 +309,30 @@ double interpSingle(double x1, double y1, double x2, double y2, double xVal){
     // defining variables
     double frac, yval;
 
-    // calculting variables
+    // calculting values
     frac = (xVal - x1)/(x2-x1);
     yval = y1+frac*(y2-y1);
 
     return yval;
+}
+
+// aerofoil will have to be split into top and bottom half before being passed to this function
+double* interp(double *x, double *y, double *xInterp, int len){
+    // defining variables
+    int i, j;
+    double *yVal;
+
+    // allocating memory
+    yVal = malloc(sizeof(yVal)*len);
+
+    // calculating values
+    for(i=0;i<len;i++){
+        for(j=0;j<len;j++){
+            if(xInterp[i] > x[j] && xInterp[i] < x[j+1]){
+                yVal[i] = interpSingle(x[j],y[j],x[j+1],y[j+1],xInterp[i]);
+            }
+        }
+    }
+
+    return yVal;
 }
