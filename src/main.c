@@ -190,6 +190,7 @@ double** chordTransform(double **x, double chord, int len){
     return transform;
 }
 
+// A function to add dihedral to blade/wing
 coord dihedralTransform(coord foam, double dihedral, int len){
     // defining variables
     int i;
@@ -223,6 +224,7 @@ coord dihedralTransform(coord foam, double dihedral, int len){
     return transform;
 }
 
+// A function to add sweep to the wing/blade
 coord sweepTransform(coord foam, double sweep, int len){
     // defining variables
     int i;
@@ -292,6 +294,7 @@ void coord2gcode(coord tower, int len){
     free(tower.x);
 }
 
+// A function to read aerofoil .dat files and return them in the aerofoil struct
 aerofoil readFile(char *filename){
     // defining variables
     int i;
@@ -305,6 +308,7 @@ aerofoil readFile(char *filename){
     // freeing memory
 }
 
+// A function to interpolate between two points
 double interpSingle(double x1, double y1, double x2, double y2, double xVal){
     // defining variables
     double frac, yval;
@@ -316,7 +320,11 @@ double interpSingle(double x1, double y1, double x2, double y2, double xVal){
     return yval;
 }
 
-// aerofoil will have to be split into top and bottom half before being passed to this function
+// NOTE - aerofoil will have to be split into top and bottom half before being passed to this function
+// NOTE - Can also use the aerofoil struct here, can probably move xInterp to within the scope of the function
+// and hard code the number of resamplings
+
+// A function to interpolate arrays
 double* interp(double *x, double *y, double *xInterp, int len){
     // defining variables
     int i, j;
